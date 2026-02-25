@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的超級週計畫海報 | My Super Weekly Poster</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --a3-width: 297mm;
+            --a3-height: 420mm;
+        }
+        body { 
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif; 
+            background-color: #FFF9E6; /* 溫暖的淡黃色背景 */
+            margin: 0;
+            padding: 0;
+        }
+        /* 模擬 A3 畫布 */
+        .a3-poster {
+            width: var(--a3-width);
+            min-height: var(--a3-height);
+            margin: 0 auto;
+            background-color: #FFF9E6;
+            background-image: 
+                radial-gradient(#FFD1D1 1.5px, transparent 1.5px),
+                radial-gradient(#D1E9FF 1.5px, transparent 1.5px);
+            background-size: 30px 30px;
+            background-position: 0 0, 15px 15px;
+            position: relative;
+            padding: 40px;
+            box-sizing: border-box;
+            overflow: hidden;
+        }
+        /* 卡通裝飾：雲朵 */
+        .cloud {
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+            filter: blur(1px);
+            opacity: 0.8;
+            z-index: 1;
+        }
+        .cloud::after, .cloud::before {
+            content: '';
+            position: absolute;
+            background: white;
+            border-radius: 100px;
+        }
+        .cloud-1 { width: 150px; height: 50px; top: 5%; left: 5%; }
+        .cloud-1::after { width: 70px; height: 70px; top: -30px; left: 20px; }
+        .cloud-1::before { width: 80px; height: 80px; top: -40px; right: 20px; }
+
+        .sticker {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 2;
+            filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.05));
+            animation: floating 4s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0%, 100% { transform: translateY(0) rotate(5deg); }
+            50% { transform: translateY(-15px) rotate(-5deg); }
+        }
+
+        .day-card {
+            background: white;
+            border: 6px solid #333; /* 粗黑線條增加卡通感 */
+            border-radius: 40px;
+            box-shadow: 12px 12px 0px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+            position: relative;
+            z-index: 10;
+        }
+
+        .time-badge {
+            background: #333;
+            color: white;
+            padding: 4px 16px;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        @media print {
+            body { background: white; }
+            .a3-poster { 
+                margin: 0; 
+                box-shadow: none; 
+                width: 297mm;
+                height: 420mm;
+            }
+            .no-print { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="a3-poster">
+        <!-- Background Decorations -->
+        <div class="cloud cloud-1"></div>
+        <div class="sticker" style="top: 2%; right: 10%;">⭐</div>
+        <div class="sticker" style="bottom: 15%; left: 3%;">🎨</div>
+        <div class="sticker" style="top: 45%; right: 2%;">🚀</div>
+        <div class="sticker" style="bottom: 5%; right: 10%;">🍭</div>
+
+        <!-- Header -->
+        <header class="text-center mb-12 relative z-10">
+            <div class="inline-block bg-white border-8 border-indigo-500 px-12 py-6 rounded-[40px] shadow-[15px_15px_0px_#818cf8]">
+                <h1 class="text-6xl font-black text-slate-800 mb-2 tracking-tight">我的精彩週計畫</h1>
+                <p class="text-2xl font-bold text-indigo-500 tracking-widest uppercase">My Super Weekly Schedule</p>
+            </div>
+        </header>
+
+        <!-- Main Schedule Grid -->
+        <div id="schedule-grid" class="grid grid-cols-2 gap-x-10 gap-y-12">
+            <!-- Rendered by JS -->
+        </div>
+
+        <!-- Footer / Legend -->
+        <footer class="mt-16 relative z-10">
+            <div class="bg-indigo-600 rounded-[50px] p-8 text-white border-8 border-white shadow-2xl">
+                <div class="flex justify-between items-center mb-6 px-4">
+                    <h2 class="text-3xl font-black flex items-center gap-3 italic">
+                        📍 地點指南 | LOCATION GUIDE
+                    </h2>
+                </div>
+                <div class="grid grid-cols-4 gap-4">
+                    <div class="bg-white/10 p-4 rounded-3xl border border-white/20">
+                        <p class="font-black text-yellow-300 text-lg">Lohas Mall</p>
+                        <p class="text-[12px] opacity-80 font-bold uppercase">康城商場</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-3xl border border-white/20">
+                        <p class="font-black text-pink-300 text-lg">Boxhill</p>
+                        <p class="text-[12px] opacity-80 font-bold uppercase">中心/學校</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-3xl border border-white/20">
+                        <p class="font-black text-cyan-300 text-lg">Club House</p>
+                        <p class="text-[12px] opacity-80 font-bold uppercase">會所</p>
+                    </div>
+                    <div class="bg-white/10 p-4 rounded-3xl border border-white/20">
+                        <p class="font-black text-green-300 text-lg">Home / School</p>
+                        <p class="text-[12px] opacity-80 font-bold uppercase">家/學校</p>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Print Button -->
+    <div class="fixed bottom-8 right-8 no-print">
+        <button onclick="window.print()" class="bg-slate-900 text-white px-10 py-5 rounded-full font-black text-xl shadow-2xl hover:scale-110 transition-transform flex items-center gap-3">
+            <span>🖨️ 列印 A3 海報</span>
+        </button>
+    </div>
+
+    <script>
+        const scheduleData = {
+            Monday: {
+                zh: "星期一", color: "#FF7EB9", items: [
+                    { t: "10:00 - 11:00", zh: "跆拳道", en: "Taekwondo", icon: "🥋" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "16:15 - 17:00", zh: "GAPSK 測試", en: "GAPSK Test", icon: "🎤" },
+                    { t: "20:10 - 20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
+                ]
+            },
+            Tuesday: {
+                zh: "星期二", color: "#7AFB92", items: [
+                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "17:00 - 18:00", zh: "小王子藝術", en: "Art Class", icon: "🎨" }
+                ]
+            },
+            Wednesday: {
+                zh: "星期三", color: "#FFD23F", items: [
+                    { t: "09:30 - 11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" }
+                ]
+            },
+            Thursday: {
+                zh: "星期四", color: "#3DDCFF", items: [
+                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "20:10 - 20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
+                ]
+            },
+            Friday: {
+                zh: "星期五", color: "#C084FC", items: [
+                    { t: "09:30 - 11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "20:00 - 21:00", zh: "K-POP 舞蹈", en: "K-POP Dance", icon: "💃" }
+                ]
+            },
+            Saturday: {
+                zh: "星期六", color: "#FF9F1C", items: [
+                    { t: "09:45 - 10:45", zh: "鋼琴課", en: "Piano Class", icon: "🎹" },
+                    { t: "11:30 - 13:00", zh: "認字小狀元", en: "Character Recog.", icon: "📚" }
+                ]
+            }
+        };
+
+        function render() {
+            const grid = document.getElementById('schedule-grid');
+            
+            Object.entries(scheduleData).forEach(([dayId, data]) => {
+                const card = document.createElement('div');
+                card.className = 'day-card flex flex-col';
+                
+                const itemsHtml = data.items.map(item => `
+                    <div class="flex items-center gap-4 mb-6 last:mb-0">
+                        <div class="text-4xl filter drop-shadow-sm">${item.icon}</div>
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="time-badge">${item.t}</span>
+                            </div>
+                            <h4 class="text-2xl font-black text-slate-800 leading-tight">${item.zh}</h4>
+                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest">${item.en}</p>
+                        </div>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="px-8 py-5 flex justify-between items-center" style="background-color: ${data.color}; border-bottom: 6px solid #333;">
+                        <div>
+                            <h3 class="font-black text-3xl text-slate-800">${data.zh}</h3>
+                            <p class="text-[10px] font-black uppercase opacity-60 tracking-widest">${dayId}</p>
+                        </div>
+                        <div class="bg-white/40 px-3 py-1 rounded-full text-[10px] font-black">ENJOY!</div>
+                    </div>
+                    <div class="p-8 flex-1">
+                        ${itemsHtml}
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        window.onload = render;
+    </script>
+</body>
+</html>
