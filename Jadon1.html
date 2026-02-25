@@ -12,7 +12,6 @@
             --a3-height: 420mm;
         }
         
-        /* 強制瀏覽器識別 A3 尺寸與方向 */
         @page {
             size: A3 portrait;
             margin: 0;
@@ -23,18 +22,16 @@
             background-color: #FFF9E6; 
             margin: 0;
             padding: 0;
-            /* 強制列印背景顏色與圖形 */
             -webkit-print-color-adjust: exact !important;
             print-color-adjust: exact !important;
             color-adjust: exact !important;
         }
 
-        /* 讓預覽畫面置中 */
         .preview-wrapper {
             display: flex;
             justify-content: center;
             background: #525659;
-            padding: 40px 0;
+            padding: 20px 0;
             min-height: 100vh;
         }
 
@@ -48,34 +45,18 @@
             background-size: 30px 30px;
             background-position: 0 0, 15px 15px;
             position: relative;
-            padding: 40px;
+            padding: 30px 40px; /* 略微縮小上下內邊距 */
             box-sizing: border-box;
             box-shadow: 0 0 50px rgba(0,0,0,0.3);
             overflow: hidden;
             flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
         }
-
-        .cloud {
-            position: absolute;
-            background: white;
-            border-radius: 100px;
-            filter: blur(1px);
-            opacity: 0.8;
-            z-index: 1;
-        }
-        .cloud::after, .cloud::before {
-            content: '';
-            position: absolute;
-            background: white;
-            border-radius: 100px;
-        }
-        .cloud-1 { width: 150px; height: 50px; top: 5%; left: 5%; }
-        .cloud-1::after { width: 70px; height: 70px; top: -30px; left: 20px; }
-        .cloud-1::before { width: 80px; height: 80px; top: -40px; right: 20px; }
 
         .sticker {
             position: absolute;
-            font-size: 3.5rem;
+            font-size: 3rem;
             z-index: 2;
             filter: drop-shadow(4px 4px 0px rgba(0,0,0,0.05));
             animation: floating 4s ease-in-out infinite;
@@ -83,29 +64,30 @@
 
         @keyframes floating {
             0%, 100% { transform: translateY(0) rotate(5deg); }
-            50% { transform: translateY(-15px) rotate(-5deg); }
+            50% { transform: translateY(-10px) rotate(-5deg); }
         }
 
         .day-card {
             background: white;
-            border: 6px solid #333;
-            border-radius: 40px;
-            box-shadow: 12px 12px 0px rgba(0,0,0,0.1);
+            border: 5px solid #333; /* 稍微減小邊框 */
+            border-radius: 35px;
+            box-shadow: 10px 10px 0px rgba(0,0,0,0.1);
             position: relative;
             z-index: 10;
+            display: flex;
+            flex-direction: column;
         }
 
         .time-badge {
             background: #333;
             color: white;
-            padding: 4px 16px;
-            border-radius: 15px;
-            font-size: 1.15rem;
+            padding: 2px 12px;
+            border-radius: 12px;
+            font-size: 1.05rem;
             font-weight: 800;
             display: inline-block;
         }
 
-        /* 列印模式修正 */
         @media print {
             .preview-wrapper { 
                 padding: 0; 
@@ -127,50 +109,46 @@
 
     <div class="preview-wrapper">
         <div class="a3-poster" id="printable-area">
-            <!-- Background Decorations -->
-            <div class="cloud cloud-1"></div>
-            <div class="sticker" style="top: 2%; right: 10%;">⭐</div>
+            <!-- Decorations -->
+            <div class="sticker" style="top: 2%; right: 5%;">⭐</div>
             <div class="sticker" style="bottom: 12%; left: 3%;">🎨</div>
-            <div class="sticker" style="top: 42%; right: 2%;">🚀</div>
-            <div class="sticker" style="bottom: 5%; right: 5%;">🍭</div>
+            <div class="sticker" style="top: 40%; right: 2%;">🚀</div>
 
-            <!-- Header -->
-            <header class="text-center mb-10 relative z-10">
-                <div class="inline-block bg-white border-[8px] border-indigo-500 px-12 py-6 rounded-[45px] shadow-[15px_15px_0px_#818cf8]">
-                    <h1 class="text-6xl font-black text-slate-800 mb-2 tracking-tight">我的精彩週計畫</h1>
-                    <p class="text-2xl font-bold text-indigo-500 tracking-widest uppercase">My Super Weekly Schedule</p>
+            <!-- Header: 縮小尺寸以節省空間 -->
+            <header class="text-center mb-6 relative z-10">
+                <div class="inline-block bg-white border-[6px] border-indigo-500 px-10 py-4 rounded-[35px] shadow-[10px_10px_0px_#818cf8]">
+                    <h1 class="text-5xl font-black text-slate-800 mb-1 tracking-tight">我的精彩週計畫</h1>
+                    <p class="text-xl font-bold text-indigo-500 tracking-widest uppercase">My Super Weekly Schedule</p>
                 </div>
             </header>
 
-            <!-- Main Schedule Grid -->
-            <div id="schedule-grid" class="grid grid-cols-2 gap-x-10 gap-y-10">
+            <!-- Grid: 縮小間距 -->
+            <div id="schedule-grid" class="grid grid-cols-2 gap-x-8 gap-y-6 flex-1">
                 <!-- Rendered by JS -->
             </div>
 
-            <!-- Footer / Legend -->
-            <footer class="mt-12 relative z-10">
-                <div class="bg-indigo-600 rounded-[50px] p-8 text-white border-[8px] border-white shadow-2xl">
-                    <div class="flex justify-between items-center mb-6 px-4">
-                        <h2 class="text-3xl font-black flex items-center gap-3 italic">
-                            📍 地點指南 | LOCATION GUIDE
-                        </h2>
-                    </div>
-                    <div class="grid grid-cols-4 gap-4">
-                        <div class="bg-white/10 p-4 rounded-3xl border border-white/20 text-center">
-                            <p class="font-black text-yellow-300 text-xl leading-none">Lohas Mall</p>
-                            <p class="text-[10px] mt-1 opacity-80 font-bold uppercase tracking-widest">康城商場</p>
+            <!-- Footer: 縮小尺寸以節省空間 -->
+            <footer class="mt-6 relative z-10">
+                <div class="bg-indigo-600 rounded-[40px] p-6 text-white border-[6px] border-white shadow-xl">
+                    <h2 class="text-2xl font-black mb-4 flex items-center justify-center gap-3 italic">
+                        📍 地點指南 | LOCATION GUIDE
+                    </h2>
+                    <div class="grid grid-cols-4 gap-3">
+                        <div class="bg-white/10 p-3 rounded-2xl border border-white/20 text-center">
+                            <p class="font-black text-yellow-300 text-lg leading-tight">Lohas Mall</p>
+                            <p class="text-[9px] mt-0.5 opacity-80 font-bold uppercase tracking-wider">康城商場</p>
                         </div>
-                        <div class="bg-white/10 p-4 rounded-3xl border border-white/20 text-center">
-                            <p class="font-black text-pink-300 text-xl leading-none">Boxhill</p>
-                            <p class="text-[10px] mt-1 opacity-80 font-bold uppercase tracking-widest">中心/學校</p>
+                        <div class="bg-white/10 p-3 rounded-2xl border border-white/20 text-center">
+                            <p class="font-black text-pink-300 text-lg leading-tight">Boxhill</p>
+                            <p class="text-[9px] mt-0.5 opacity-80 font-bold uppercase tracking-wider">中心/學校</p>
                         </div>
-                        <div class="bg-white/10 p-4 rounded-3xl border border-white/20 text-center">
-                            <p class="font-black text-cyan-300 text-xl leading-none">Club House</p>
-                            <p class="text-[10px] mt-1 opacity-80 font-bold uppercase tracking-widest">會所</p>
+                        <div class="bg-white/10 p-3 rounded-2xl border border-white/20 text-center">
+                            <p class="font-black text-cyan-300 text-lg leading-tight">Club House</p>
+                            <p class="text-[9px] mt-0.5 opacity-80 font-bold uppercase tracking-wider">會所</p>
                         </div>
-                        <div class="bg-white/10 p-4 rounded-3xl border border-white/20 text-center">
-                            <p class="font-black text-green-300 text-xl leading-none">School/Home</p>
-                            <p class="text-[10px] mt-1 opacity-80 font-bold uppercase tracking-widest">學校/家</p>
+                        <div class="bg-white/10 p-3 rounded-2xl border border-white/20 text-center">
+                            <p class="font-black text-green-300 text-lg leading-tight">School/Home</p>
+                            <p class="text-[9px] mt-0.5 opacity-80 font-bold uppercase tracking-wider">學校/家</p>
                         </div>
                     </div>
                 </div>
@@ -180,19 +158,19 @@
 
     <!-- Print Button & Guide -->
     <div class="fixed bottom-8 right-8 no-print flex flex-col items-end gap-4">
-        <!-- 提示小工具 -->
         <div class="bg-white p-6 rounded-3xl shadow-2xl border-4 border-yellow-400 max-w-xs animate-bounce">
-            <p class="font-black text-slate-800 text-lg mb-2">💡 列印小貼士：</p>
+            <p class="font-black text-slate-800 text-lg mb-2">💡 修正內容過長問題：</p>
             <ul class="text-xs font-bold text-slate-500 space-y-2">
-                <li>1. 點擊下方按鈕或按 <kbd class="bg-slate-100 px-1 rounded">Ctrl+P</kbd></li>
-                <li>2. 目標請選 <b>「另存為 PDF」</b></li>
-                <li>3. 紙張大小選 <b>「A3」</b></li>
-                <li>4. 必須勾選 <b>「背景圖形」</b> (重要!)</li>
+                <li>1. 已縮小間距，確保 A3 能印完</li>
+                <li>2. 列印時請選 <b>「另存為 PDF」</b></li>
+                <li>3. 紙張大小必須選 <b>「A3」</b></li>
+                <li>4. 邊距建議選 <b>「無 (None)」</b></li>
+                <li>5. 必須勾選 <b>「背景圖形」</b></li>
             </ul>
         </div>
         
-        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-6 rounded-full font-black text-2xl shadow-[0_10px_0_#4338ca] hover:translate-y-1 hover:shadow-[0_5px_0_#4338ca] transition-all flex items-center gap-4">
-            <span>🖨️ 列印 / 儲存 PDF</span>
+        <button onclick="window.print()" class="bg-indigo-600 hover:bg-indigo-700 text-white px-10 py-6 rounded-full font-black text-2xl shadow-[0_10px_0_#4338ca] transition-all flex items-center gap-4">
+            <span>🖨️ 重新列印 / 儲存 PDF</span>
         </button>
     </div>
 
@@ -200,41 +178,41 @@
         const scheduleData = {
             Monday: {
                 zh: "星期一", color: "#FF7EB9", items: [
-                    { t: "10:00 - 11:00", zh: "跆拳道", en: "Taekwondo", icon: "🥋" },
-                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
-                    { t: "16:15 - 17:00", zh: "GAPSK 測試", en: "GAPSK Test", icon: "🎤" },
-                    { t: "20:10 - 20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
+                    { t: "10:00-11:00", zh: "跆拳道", en: "Taekwondo", icon: "🥋" },
+                    { t: "13:15-16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "16:15-17:00", zh: "GAPSK 測試", en: "GAPSK Test", icon: "🎤" },
+                    { t: "20:10-20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
                 ]
             },
             Tuesday: {
                 zh: "星期二", color: "#7AFB92", items: [
-                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
-                    { t: "17:00 - 18:00", zh: "小王子藝術", en: "Art Class", icon: "🎨" }
+                    { t: "12:30-16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "17:00-18:00", zh: "小王子藝術", en: "Art Class", icon: "🎨" }
                 ]
             },
             Wednesday: {
                 zh: "星期三", color: "#FFD23F", items: [
-                    { t: "09:30 - 11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
-                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" }
+                    { t: "09:30-11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
+                    { t: "13:15-16:15", zh: "學校課程", en: "School", icon: "🏫" }
                 ]
             },
             Thursday: {
                 zh: "星期四", color: "#3DDCFF", items: [
-                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
-                    { t: "20:10 - 20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
+                    { t: "12:30-16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "20:10-20:45", zh: "趣味數學", en: "Math Fun", icon: "🔢" }
                 ]
             },
             Friday: {
                 zh: "星期五", color: "#C084FC", items: [
-                    { t: "09:30 - 11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
-                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", icon: "🏫" },
-                    { t: "20:00 - 21:00", zh: "K-POP 舞蹈", en: "K-POP Dance", icon: "💃" }
+                    { t: "09:30-11:00", zh: "怪物科學實驗室", en: "Monster Lab", icon: "🧪" },
+                    { t: "13:15-16:15", zh: "學校課程", en: "School", icon: "🏫" },
+                    { t: "20:00-21:00", zh: "K-POP 舞蹈", en: "K-POP Dance", icon: "💃" }
                 ]
             },
             Saturday: {
                 zh: "星期六", color: "#FF9F1C", items: [
-                    { t: "09:45 - 10:45", zh: "鋼琴課", en: "Piano Class", icon: "🎹" },
-                    { t: "11:30 - 13:00", zh: "認字小狀元", en: "Character Recog.", icon: "📚" }
+                    { t: "09:45-10:45", zh: "鋼琴課", en: "Piano Class", icon: "🎹" },
+                    { t: "11:30-13:00", zh: "認字小狀元", en: "Character Recog.", icon: "📚" }
                 ]
             }
         };
@@ -244,30 +222,30 @@
             
             Object.entries(scheduleData).forEach(([dayId, data]) => {
                 const card = document.createElement('div');
-                card.className = 'day-card flex flex-col';
+                card.className = 'day-card';
                 
                 const itemsHtml = data.items.map(item => `
-                    <div class="flex items-center gap-5 mb-5 last:mb-0">
-                        <div class="text-4xl filter drop-shadow-sm flex-shrink-0">${item.icon}</div>
-                        <div class="flex-1">
-                            <div class="mb-1">
+                    <div class="flex items-center gap-4 mb-3 last:mb-0">
+                        <div class="text-3xl filter drop-shadow-sm flex-shrink-0">${item.icon}</div>
+                        <div class="flex-1 overflow-hidden">
+                            <div class="mb-0.5">
                                 <span class="time-badge">${item.t}</span>
                             </div>
-                            <h4 class="text-2xl font-black text-slate-800 leading-tight">${item.zh}</h4>
-                            <p class="text-[12px] font-bold text-slate-400 uppercase tracking-widest">${item.en}</p>
+                            <h4 class="text-xl font-black text-slate-800 leading-tight truncate">${item.zh}</h4>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-wider truncate">${item.en}</p>
                         </div>
                     </div>
                 `).join('');
 
                 card.innerHTML = `
-                    <div class="px-8 py-5 flex justify-between items-center" style="background-color: ${data.color}; border-bottom: 6px solid #333;">
+                    <div class="px-6 py-4 flex justify-between items-center" style="background-color: ${data.color}; border-bottom: 5px solid #333;">
                         <div>
-                            <h3 class="font-black text-3xl text-slate-800">${data.zh}</h3>
-                            <p class="text-[10px] font-black uppercase opacity-60 tracking-widest">${dayId}</p>
+                            <h3 class="font-black text-2xl text-slate-800">${data.zh}</h3>
+                            <p class="text-[9px] font-black uppercase opacity-60 tracking-widest">${dayId}</p>
                         </div>
-                        <div class="bg-white/40 px-3 py-1 rounded-full text-[10px] font-black border border-black/10">ENJOY!</div>
+                        <div class="bg-white/40 px-2 py-0.5 rounded-full text-[9px] font-black border border-black/10">ENJOY!</div>
                     </div>
-                    <div class="p-7 flex-1">
+                    <div class="p-5 flex-1">
                         ${itemsHtml}
                     </div>
                 `;
