@@ -1,257 +1,250 @@
-import React, { useState, useEffect } from 'react';
-import { 
-  Calendar, 
-  Clock, 
-  MapPin, 
-  Music, 
-  Brain, 
-  Palette, 
-  Calculator, 
-  FlaskConical, 
-  Dumbbell, 
-  School,
-  Star,
-  ChevronRight,
-  LayoutDashboard,
-  Bell,
-  Search
-} from 'lucide-react';
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的超棒週計畫 | My Awesome Weekly Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        body { 
+            font-family: 'Fredoka', 'Noto Sans TC', sans-serif; 
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#e0f2fe 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        .bubbly-card {
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .bubbly-card:hover {
+            transform: translateY(-8px) rotate(1deg);
+        }
+        @media print {
+            .no-print { display: none; }
+            .print-area { grid-template-cols: repeat(2, 1fr) !important; }
+        }
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen pb-12">
 
-const scheduleData = {
-  Monday: [
-    { time: "10:00 - 11:00", activity: "跆拳道 (Taekwondo)", location: "Lohas Mall", icon: <Dumbbell className="w-4 h-4" />, color: "bg-blue-50 border-blue-100 text-blue-700", accent: "bg-blue-600" },
-    { time: "13:15 - 16:15", activity: "學校 (School)", location: "School", icon: <School className="w-4 h-4" />, color: "bg-green-50 border-green-100 text-green-700", accent: "bg-green-600" },
-    { time: "16:15 - 17:00", activity: "GAPSK 普話測試", location: "Boxhill", icon: <Star className="w-4 h-4" />, color: "bg-purple-50 border-purple-100 text-purple-700", accent: "bg-purple-600" },
-    { time: "20:10 - 20:45", activity: "數學 (Math)", location: "Home", icon: <Calculator className="w-4 h-4" />, color: "bg-orange-50 border-orange-100 text-orange-700", accent: "bg-orange-600" },
-  ],
-  Tuesday: [
-    { time: "12:30 - 16:15", activity: "學校 (School)", location: "School", icon: <School className="w-4 h-4" />, color: "bg-green-50 border-green-100 text-green-700", accent: "bg-green-600" },
-    { time: "17:00 - 18:00", activity: "小王子藝術 (Art)", location: "Lohas Mall", icon: <Palette className="w-4 h-4" />, color: "bg-yellow-50 border-yellow-100 text-yellow-700", accent: "bg-yellow-600" },
-  ],
-  Wednesday: [
-    { time: "09:30 - 11:00", activity: "Monster Lab 實驗室", location: "Lohas Mall", icon: <FlaskConical className="w-4 h-4" />, color: "bg-amber-50 border-amber-100 text-amber-700", accent: "bg-amber-600" },
-    { time: "13:15 - 16:15", activity: "學校 (School)", location: "School", icon: <School className="w-4 h-4" />, color: "bg-green-50 border-green-100 text-green-700", accent: "bg-green-600" },
-  ],
-  Thursday: [
-    { time: "12:30 - 16:15", activity: "學校 (School)", location: "School", icon: <School className="w-4 h-4" />, color: "bg-green-50 border-green-100 text-green-700", accent: "bg-green-600" },
-    { time: "20:10 - 20:45", activity: "數學 (Math)", location: "Home", icon: <Calculator className="w-4 h-4" />, color: "bg-orange-50 border-orange-100 text-orange-700", accent: "bg-orange-600" },
-  ],
-  Friday: [
-    { time: "09:30 - 11:00", activity: "Monster Lab 實驗室", location: "Lohas Mall", icon: <FlaskConical className="w-4 h-4" />, color: "bg-amber-50 border-amber-100 text-amber-700", accent: "bg-amber-600" },
-    { time: "13:15 - 16:15", activity: "學校 (School)", location: "School", icon: <School className="w-4 h-4" />, color: "bg-green-50 border-green-100 text-green-700", accent: "bg-green-600" },
-    { time: "20:00 - 21:00", activity: "K-POP 舞蹈", location: "Club House", icon: <Music className="w-4 h-4" />, color: "bg-lime-50 border-lime-100 text-lime-700", accent: "bg-lime-600" },
-  ],
-  Saturday: [
-    { time: "09:45 - 10:45", activity: "鋼琴 (Piano)", location: "Lohas Mall", icon: <Music className="w-4 h-4" />, color: "bg-red-50 border-red-100 text-red-700", accent: "bg-red-600" },
-    { time: "11:30 - 13:00", activity: "Mind Power 思維訓練", location: "Lohas Mall", icon: <Brain className="w-4 h-4" />, color: "bg-indigo-50 border-indigo-100 text-indigo-700", accent: "bg-indigo-600" },
-  ]
-};
-
-const dayMapping = {
-  Monday: "星期一",
-  Tuesday: "星期二",
-  Wednesday: "星期三",
-  Thursday: "星期四",
-  Friday: "星期五",
-  Saturday: "星期六"
-};
-
-const App = () => {
-  const [currentDay, setCurrentDay] = useState("");
-
-  useEffect(() => {
-    const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-    const today = days[new Date().getDay()];
-    setCurrentDay(today === 'Sunday' ? 'Monday' : today); // 星期日默認顯示星期一
-  }, []);
-
-  return (
-    <div className="min-h-screen bg-[#F8FAFC] flex font-sans text-slate-900">
-      {/* Sidebar - Desktop Only */}
-      <aside className="hidden lg:flex w-64 bg-white border-r border-slate-200 flex-col sticky top-0 h-screen">
-        <div className="p-6">
-          <div className="flex items-center gap-3 text-indigo-600 mb-8">
-            <div className="bg-indigo-600 p-2 rounded-xl text-white">
-              <Calendar className="w-6 h-6" />
-            </div>
-            <span className="font-bold text-xl tracking-tight">ScheduleGo</span>
-          </div>
-          
-          <nav className="space-y-1">
-            <a href="#" className="flex items-center gap-3 px-4 py-3 bg-indigo-50 text-indigo-700 rounded-xl font-semibold">
-              <LayoutDashboard className="w-5 h-5" /> 總覽面版
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">
-              <Bell className="w-5 h-5" /> 通知提醒
-            </a>
-            <a href="#" className="flex items-center gap-3 px-4 py-3 text-slate-500 hover:bg-slate-50 rounded-xl transition-colors">
-              <MapPin className="w-5 h-5" /> 地點導覽
-            </a>
-          </nav>
-        </div>
-        
-        <div className="mt-auto p-6">
-          <div className="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-4 text-white">
-            <p className="text-xs opacity-80 mb-1 font-medium">本週進度</p>
-            <p className="font-bold text-lg mb-3">5/6 天已排程</p>
-            <div className="w-full bg-white/20 h-2 rounded-full overflow-hidden">
-              <div className="bg-white h-full w-[83%]"></div>
-            </div>
-          </div>
-        </div>
-      </aside>
-
-      {/* Main Content */}
-      <main className="flex-1">
-        {/* Top Header */}
-        <header className="bg-white border-b border-slate-200 px-6 py-4 sticky top-0 z-10 flex justify-between items-center">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="relative max-w-md w-full hidden md:block">
-              <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
-              <input 
-                type="text" 
-                placeholder="搜尋活動或課程..." 
-                className="w-full pl-10 pr-4 py-2 bg-slate-100 border-none rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 outline-none"
-              />
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <div className="text-right hidden sm:block">
-              <p className="text-sm font-bold">小朋友的行程表</p>
-              <p className="text-xs text-slate-500">2024 年度計畫</p>
-            </div>
-            <div className="w-10 h-10 bg-slate-200 rounded-full border-2 border-white shadow-sm overflow-hidden">
-              <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix" alt="avatar" />
-            </div>
-          </div>
-        </header>
-
-        <div className="p-6 lg:p-10">
-          {/* Welcome Banner */}
-          <section className="mb-10">
-            <h2 className="text-3xl font-black text-slate-800 mb-2">早安！又是充實的一天 🚀</h2>
-            <p className="text-slate-500">今天是 {new Date().toLocaleDateString('zh-HK', { month: 'long', day: 'numeric', weekday: 'long' })}</p>
-          </section>
-
-          {/* Today's Highlight */}
-          <section className="mb-12">
-            <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-xl flex items-center gap-2">
-                <Star className="w-6 h-6 text-amber-500 fill-amber-500" />
-                今日行程焦點
-              </h3>
-              <button className="text-indigo-600 font-semibold text-sm flex items-center gap-1 hover:underline">
-                查看全部行程 <ChevronRight className="w-4 h-4" />
-              </button>
+    <!-- Header Section -->
+    <header class="bg-white border-b-4 border-yellow-400 p-6 mb-8 shadow-sm no-print">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-4">
+                <div class="bg-orange-400 p-3 rounded-2xl shadow-lg shadow-orange-100 floating">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/><polyline points="14.5 2 14.5 8 20 8"/></svg>
+                </div>
+                <div>
+                    <h1 class="text-3xl font-black text-indigo-600 tracking-tight">我的超棒週計畫</h1>
+                    <p class="text-lg font-bold text-orange-500 uppercase tracking-tighter">My Awesome Weekly Schedule</p>
+                </div>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {scheduleData[currentDay]?.map((item, idx) => (
-                <div key={idx} className="bg-white p-5 rounded-3xl shadow-sm border border-slate-100 hover:shadow-md transition-shadow">
-                  <div className={`w-10 h-10 rounded-2xl flex items-center justify-center mb-4 ${item.color.split(' ')[0]} ${item.color.split(' ')[2]}`}>
-                    {item.icon}
-                  </div>
-                  <h4 className="font-bold text-slate-800 mb-1">{item.activity}</h4>
-                  <div className="space-y-2 mt-4">
-                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                      <Clock className="w-3.5 h-3.5" />
-                      {item.time}
-                    </div>
-                    <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
-                      <MapPin className="w-3.5 h-3.5" />
-                      {item.location}
-                    </div>
-                  </div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden sm:block">
+                    <p id="date-zh" class="font-bold text-slate-600">載入中...</p>
+                    <p id="date-en" class="text-xs font-bold text-slate-400">Loading...</p>
                 </div>
-              ))}
+                <button onclick="window.print()" class="bg-indigo-500 hover:bg-indigo-600 text-white px-6 py-3 rounded-2xl font-black shadow-lg transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
+                    列印 | PRINT
+                </button>
             </div>
-          </section>
+        </div>
+    </header>
 
-          {/* Full Weekly View */}
-          <section>
-            <h3 className="font-bold text-xl mb-6">每週完整視野</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {Object.entries(scheduleData).map(([day, activities]) => (
-                <div 
-                  key={day} 
-                  className={`bg-white rounded-[2.5rem] overflow-hidden shadow-sm border transition-all duration-300 ${
-                    currentDay === day ? 'border-indigo-300 ring-4 ring-indigo-50 shadow-xl scale-[1.02]' : 'border-slate-100'
-                  }`}
-                >
-                  <div className={`px-8 py-5 flex justify-between items-center ${currentDay === day ? 'bg-indigo-600' : 'bg-slate-800'}`}>
+    <main class="max-w-7xl mx-auto px-4 sm:px-6">
+        <!-- Today Banner -->
+        <div id="today-alert" class="hidden mb-10 bg-gradient-to-r from-yellow-300 to-orange-400 rounded-[2rem] p-6 shadow-xl relative overflow-hidden no-print">
+            <div class="relative z-10 flex items-center justify-between">
+                <div class="flex items-center gap-6">
+                    <div class="text-5xl">🎒</div>
                     <div>
-                      <h4 className="text-white font-black text-lg">{dayMapping[day]}</h4>
-                      <p className="text-white/60 text-[10px] uppercase tracking-widest font-bold">{day}</p>
+                        <h2 class="text-2xl font-black text-white">今天是新的一天！加油！</h2>
+                        <p class="text-white font-bold opacity-90">Today is a brand new day! Let's go!</p>
                     </div>
-                    {currentDay === day && (
-                      <span className="bg-white/20 text-white text-[10px] px-3 py-1 rounded-full font-black uppercase">Today</span>
-                    )}
-                  </div>
-                  
-                  <div className="p-6 space-y-4">
-                    {activities.map((item, idx) => (
-                      <div key={idx} className="group relative pl-4">
-                        <div className={`absolute left-0 top-0 bottom-0 w-1 rounded-full ${item.accent}`}></div>
-                        <div className="flex justify-between items-start mb-1">
-                          <span className="font-bold text-slate-800 text-sm">{item.activity}</span>
-                        </div>
-                        <div className="flex flex-wrap gap-3">
-                          <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
-                            <Clock className="w-3 h-3" /> {item.time}
-                          </span>
-                          <span className="text-[11px] font-bold text-slate-400 flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> {item.location}
-                          </span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
                 </div>
-              ))}
+                <div class="hidden md:block text-6xl opacity-20 font-black">HAVE FUN!</div>
             </div>
-          </section>
-
-          {/* Location Reference Section */}
-          <section className="mt-16 bg-slate-900 rounded-[3rem] p-8 md:p-12 text-white overflow-hidden relative">
-            <div className="relative z-10">
-              <h3 className="text-2xl font-black mb-8 flex items-center gap-3">
-                <MapPin className="w-8 h-8 text-indigo-400" />
-                活動據點指南
-              </h3>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                {[
-                  { name: "Lohas Mall", items: ["跆拳道", "小王子藝術", "Monster Lab", "鋼琴", "思維訓練"] },
-                  { name: "Boxhill", items: ["GAPSK 普話測試"] },
-                  { name: "Club House", items: ["K-POP 舞蹈"] },
-                  { name: "School / Home", items: ["正規課程", "數學強化"] }
-                ].map((loc, i) => (
-                  <div key={i} className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/10 hover:bg-white/20 transition-colors">
-                    <p className="font-black text-indigo-300 mb-3">{loc.name}</p>
-                    <ul className="space-y-2">
-                      {loc.items.map((item, j) => (
-                        <li key={j} className="text-xs text-slate-300 flex items-center gap-2">
-                          <div className="w-1 h-1 bg-indigo-500 rounded-full"></div>
-                          {item}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 bg-indigo-600/20 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 left-0 -ml-16 -mb-16 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl"></div>
-          </section>
+            <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-white/20 rounded-full blur-2xl"></div>
         </div>
 
-        <footer className="p-10 text-center border-t border-slate-200">
-          <p className="text-slate-400 text-xs font-medium uppercase tracking-[0.2em]">
-            © 2024 Kids Activity Dashboard • Powered by Modern UI
-          </p>
-        </footer>
-      </main>
-    </div>
-  );
-};
+        <!-- Schedule Grid -->
+        <div id="schedule-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 print-area">
+            <!-- Rendered by JS -->
+        </div>
 
-export default App;
+        <!-- Location Legends -->
+        <section class="mt-16 bg-white rounded-[3rem] p-10 border-4 border-indigo-100 shadow-sm">
+            <h3 class="text-2xl font-black text-indigo-600 mb-8 flex items-center gap-3">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="text-pink-500"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                地點小指南 | Location Guide
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 rounded-[2rem] bg-blue-50 border-2 border-blue-100">
+                    <p class="font-black text-blue-600 mb-1 text-lg">Lohas Mall</p>
+                    <p class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-3">康城商場</p>
+                    <div class="flex flex-wrap gap-1">
+                        <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-500">跆拳道</span>
+                        <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-500">藝術</span>
+                        <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-500">鋼琴</span>
+                        <span class="bg-white px-2 py-0.5 rounded-full text-[10px] font-bold text-blue-500">科學</span>
+                    </div>
+                </div>
+                <div class="p-6 rounded-[2rem] bg-purple-50 border-2 border-purple-100">
+                    <p class="font-black text-purple-600 mb-1 text-lg">Boxhill</p>
+                    <p class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-3">幼稚園/中心</p>
+                    <p class="text-[11px] font-bold text-purple-500">GAPSK 測試 (Test)</p>
+                </div>
+                <div class="p-6 rounded-[2rem] bg-pink-50 border-2 border-pink-100">
+                    <p class="font-black text-pink-600 mb-1 text-lg">Club House</p>
+                    <p class="text-xs font-bold text-pink-400 uppercase tracking-wider mb-3">住客會所</p>
+                    <p class="text-[11px] font-bold text-pink-500">K-POP 舞蹈 (Dance)</p>
+                </div>
+                <div class="p-6 rounded-[2rem] bg-green-50 border-2 border-green-100">
+                    <p class="font-black text-green-600 mb-1 text-lg">Home / School</p>
+                    <p class="text-xs font-bold text-green-400 uppercase tracking-wider mb-3">家 / 學校</p>
+                    <p class="text-[11px] font-bold text-green-500">數學 (Math) / 課程</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="mt-12 text-center text-slate-400 px-6">
+        <p class="text-sm font-bold tracking-widest">🌈 KEEP SMILING & KEEP LEARNING 🌈</p>
+    </footer>
+
+    <script>
+        const scheduleData = {
+            Monday: {
+                zh: "星期一",
+                color: "indigo",
+                items: [
+                    { t: "10:00 - 11:00", zh: "跆拳道", en: "Taekwondo", loc: "Lohas Mall", icon: "🥋" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", loc: "School", icon: "🏫" },
+                    { t: "16:15 - 17:00", zh: "GAPSK 測試", en: "GAPSK Test", loc: "Boxhill", icon: "🎤" },
+                    { t: "20:10 - 20:45", zh: "數學時間", en: "Math Fun", loc: "Home", icon: "🔢" }
+                ]
+            },
+            Tuesday: {
+                zh: "星期二",
+                color: "rose",
+                items: [
+                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", loc: "School", icon: "🏫" },
+                    { t: "17:00 - 18:00", zh: "小王子藝術", en: "Art Class", loc: "Lohas Mall", icon: "🎨" }
+                ]
+            },
+            Wednesday: {
+                zh: "星期三",
+                color: "amber",
+                items: [
+                    { t: "09:30 - 11:00", zh: "科學實驗室", en: "Monster Lab", loc: "Lohas Mall", icon: "🧪" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", loc: "School", icon: "🏫" }
+                ]
+            },
+            Thursday: {
+                zh: "星期四",
+                color: "emerald",
+                items: [
+                    { t: "12:30 - 16:15", zh: "學校課程", en: "School", loc: "School", icon: "🏫" },
+                    { t: "20:10 - 20:45", zh: "數學時間", en: "Math Fun", loc: "Home", icon: "🔢" }
+                ]
+            },
+            Friday: {
+                zh: "星期五",
+                color: "violet",
+                items: [
+                    { t: "09:30 - 11:00", zh: "科學實驗室", en: "Monster Lab", loc: "Lohas Mall", icon: "🧪" },
+                    { t: "13:15 - 16:15", zh: "學校課程", en: "School", loc: "School", icon: "🏫" },
+                    { t: "20:00 - 21:00", zh: "K-POP 舞蹈", en: "K-POP Dance", loc: "Club House", icon: "💃" }
+                ]
+            },
+            Saturday: {
+                zh: "星期六",
+                color: "sky",
+                items: [
+                    { t: "09:45 - 10:45", zh: "鋼琴課", en: "Piano Class", loc: "Lohas Mall", icon: "🎹" },
+                    { t: "11:30 - 13:00", zh: "思維訓練", en: "Mind Power", loc: "Lohas Mall", icon: "🧠" }
+                ]
+            }
+        };
+
+        const colorClasses = {
+            indigo: "bg-indigo-600 border-indigo-200 shadow-indigo-100",
+            rose: "bg-rose-500 border-rose-200 shadow-rose-100",
+            amber: "bg-amber-500 border-amber-200 shadow-amber-100",
+            emerald: "bg-emerald-500 border-emerald-200 shadow-emerald-100",
+            violet: "bg-violet-500 border-violet-200 shadow-violet-100",
+            sky: "bg-sky-500 border-sky-200 shadow-sky-100"
+        };
+
+        function init() {
+            const container = document.getElementById('schedule-container');
+            const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            const today = dayNames[new Date().getDay()];
+
+            // Update Header Date
+            const now = new Date();
+            document.getElementById('date-zh').innerText = now.toLocaleDateString('zh-HK', { month: 'long', day: 'numeric', weekday: 'long' });
+            document.getElementById('date-en').innerText = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', weekday: 'long' });
+
+            if (today !== 'Sunday') document.getElementById('today-alert').classList.remove('hidden');
+
+            Object.entries(scheduleData).forEach(([dayId, data]) => {
+                const isToday = dayId === today;
+                const card = document.createElement('div');
+                card.className = `bubbly-card bg-white rounded-[2.5rem] overflow-hidden border-4 shadow-xl ${isToday ? 'border-yellow-400 ring-8 ring-yellow-50' : 'border-white'}`;
+                
+                const itemsHtml = data.items.map(item => `
+                    <div class="flex items-start gap-4 group">
+                        <div class="text-3xl">${item.icon}</div>
+                        <div class="flex-1">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-black text-slate-800 text-lg leading-tight">${item.zh}</h4>
+                            </div>
+                            <p class="text-xs font-bold text-slate-400 uppercase tracking-tighter mb-2">${item.en}</p>
+                            <div class="flex flex-col gap-1">
+                                <span class="inline-flex items-center gap-1.5 text-xs font-black text-indigo-500 bg-indigo-50 w-fit px-2 py-0.5 rounded-lg">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    ${item.t}
+                                </span>
+                                <span class="inline-flex items-center gap-1.5 text-[10px] font-bold text-slate-400 ml-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                                    ${item.loc}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                `).join('<div class="h-1 bg-slate-50 my-6 rounded-full opacity-50"></div>');
+
+                card.innerHTML = `
+                    <div class="px-8 py-6 text-white ${colorClasses[data.color].split(' ')[0]} relative overflow-hidden">
+                        <div class="relative z-10 flex justify-between items-center">
+                            <div>
+                                <h3 class="font-black text-2xl tracking-tighter">${data.zh}</h3>
+                                <p class="text-[10px] font-black uppercase tracking-[0.2em] opacity-80">${dayId}</p>
+                            </div>
+                            ${isToday ? '<span class="bg-yellow-400 text-slate-900 text-[10px] font-black px-3 py-1.5 rounded-2xl shadow-lg border-2 border-white animate-bounce">今天！TODAY</span>' : ''}
+                        </div>
+                        <div class="absolute -right-4 -bottom-4 w-20 h-20 bg-white/10 rounded-full"></div>
+                    </div>
+                    <div class="p-8">
+                        ${itemsHtml}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
